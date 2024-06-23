@@ -1,17 +1,15 @@
-const dynamoose = require("dynamoose");
 const AWS = require("aws-sdk");
 const path = require("path");
+const dotenv = require("dotenv");
 
-// Set the AWS_CONFIG_FILE environment variable programmatically
-process.env.AWS_CONFIG_FILE = path.resolve(__dirname, "../aws-config.ini");
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
-// Ensure the SDK loads the shared configuration file
-process.env.AWS_SDK_LOAD_CONFIG = "1";
+AWS.config.update({
+  region: process.env.AWS_REGION,
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+});
 
-// Initialize AWS SDK (it will automatically use the configuration from AWS_CONFIG_FILE)
-const ddb = new AWS.DynamoDB();
+const docClient = new AWS.DynamoDB.DocumentClient();
 
-// Set the DynamoDB instance to use with Dynamoose
-dynamoose.aws.ddb.set(ddb);
-
-module.exports = dynamoose;
+module.exports = docClient;
